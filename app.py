@@ -2,6 +2,7 @@ import streamlit as st
 from ai_engine import analyze_with_ai
 import streamlit.components.v1 as components
 from voice_input import get_voice_input
+from speech_to_text import transcribe_audio
 
 # =====================================================
 # PAGE HEADER
@@ -268,9 +269,14 @@ if (
 audio_bytes = get_voice_input()
 
 if audio_bytes:
-    st.audio(audio_bytes)
+    st.spinner("Converting speech to text...")
 
-    st.success("Voice recorded successfully!")
+    text = transcribe_audio(audio_bytes)
 
-    # Optional: store in session state
-    st.session_state.voice_audio = audio_bytes
+    if text:
+        st.success(f"You said: {text}")
+
+        # Send to AI model
+        result = analyze_with_ai(text)
+
+        st.write(result)
