@@ -1,35 +1,22 @@
+# voice_input.py
+
 import streamlit as st
-from streamlit_webrtc import webrtc_streamer, WebRtcMode
-import av
-import numpy as np
-import tempfile
-import speech_recognition as sr
+from streamlit_mic_recorder import mic_recorder
+
 
 def get_voice_input():
-    st.write(" Click start and speak")
+    """
+    Records voice input from the user using streamlit-mic-recorder.
+    Returns recorded audio bytes if available.
+    """
 
-    ctx = webrtc_streamer(
-        key="speech",
-        mode=WebRtcMode.SENDRECV,
-        audio_receiver_size=1024,
-        media_stream_constraints={"audio": True, "video": False},
+    audio = mic_recorder(
+        start_prompt="🎤 Start Recording",
+        stop_prompt="⏹ Stop Recording",
+        key="voice_input_recorder"
     )
 
-    if ctx.audio_receiver:
-        try:
-            audio_frames = ctx.audio_receiver.get_frames(timeout=1)
-            audio_data = b"".join([frame.to_ndarray().tobytes() for frame in audio_frames])
+    if audio:
+        return audio["bytes"]
 
-            with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmpfile:
-                tmpfile.write(audio_data)
-                tmp_path = tmpfile.name
-
-            recognizer = sr.Recognizer()
-            with sr.AudioFile(tmp_path) as source:
-                audio = recognizer.record(source)
-
-            text = recognizer.recognize_google(audio)
-            return text
-
-        except:
-            return None
+    return None

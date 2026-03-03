@@ -1,7 +1,7 @@
 import streamlit as st
 from ai_engine import analyze_with_ai
-from voice_input import get_voice_input
 import streamlit.components.v1 as components
+from voice_input import get_voice_input
 
 # =====================================================
 # PAGE HEADER
@@ -261,11 +261,16 @@ if (
 # VOICE INPUT HANDLING
 # =====================================================
 
-if mic_clicked:
-    with st.spinner("Listening..."):
-        text = get_voice_input()
+# =====================================================
+# VOICE INPUT HANDLING (Using streamlit-mic-recorder)
+# =====================================================
 
-    if text and text.strip() != "":
-        st.session_state.pending_prompt = text
-        st.rerun()
-        
+audio_bytes = get_voice_input()
+
+if audio_bytes:
+    st.audio(audio_bytes)
+
+    st.success("Voice recorded successfully!")
+
+    # Optional: store in session state
+    st.session_state.voice_audio = audio_bytes
