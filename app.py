@@ -263,20 +263,20 @@ if (
 # =====================================================
 
 # =====================================================
-# VOICE INPUT HANDLING (Using streamlit-mic-recorder)
+# VOICE SEARCH FLOW
 # =====================================================
 
 audio_bytes = get_voice_input()
 
 if audio_bytes:
-    st.spinner("Converting speech to text...")
-
-    text = transcribe_audio(audio_bytes)
+    with st.spinner("🔄 Converting speech to text..."):
+        text = transcribe_audio(audio_bytes)
 
     if text:
         st.success(f"You said: {text}")
 
-        # Send to AI model
         result = analyze_with_ai(text)
-
         st.write(result)
+
+    else:
+        st.error("Speech recognition failed. Try again.")
