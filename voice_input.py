@@ -1,13 +1,28 @@
+from streamlit_mic_recorder import mic_recorder
 import speech_recognition as sr
+import tempfile
 
 def get_voice_input():
-    recognizer = sr.Recognizer()
+    audio = mic_recorder(
+        start_prompt=" Start Recording",
+        stop_prompt=" Stop Recording",
+        key="recorder"
+    )
 
-    with sr.Microphone() as source:
-        audio = recognizer.listen(source)
+    if audio:
+        with tempfile.NamedTemporaryFile(delete=False, suffix=".wav") as tmpfile:
+            tmpfile.write(audio["bytes"])
+            tmp_path = tmpfile.name
 
-    try:
-        text = recognizer.recognize_google(audio)
-        return text
-    except:
-        return "Voice not recognized"
+        recognizer = sr.Recognizer()
+
+        with sr.AudioFile(tmp_path) as source:
+            audio_data = recognizer.record(source)
+
+        try:
+            text = recognizer.recognize_google(audio_data)
+            return text
+        except:
+            return "Could not understand audio"
+
+    return None

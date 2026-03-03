@@ -1,3 +1,4 @@
 streamlit
 huggingface_hub
-speechrecognition
+streamlit-mic-recorder
+SpeechRecognition
