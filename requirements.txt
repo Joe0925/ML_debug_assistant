@@ -1,4 +1,4 @@
 streamlit
 huggingface_hub
-streamlit-mic-recorder
-SpeechRecognition
+streamlit-webrtc
+av
